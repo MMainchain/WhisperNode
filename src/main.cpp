@@ -9,5 +9,13 @@ void setup() {
 void loop() {
     // put your main code here, to run repeatedly:
     Serial.println("Hello From Arduino");
-    delay(5000);
+
+    // Pilotage des leds
+    digitalWrite(9, LOW);
+    digitalWrite(DD6, HIGH);
+    delay(1000);
+    digitalWrite(6, LOW);
+    digitalWrite(9, HIGH);
+    delay(1000);
+
 }
