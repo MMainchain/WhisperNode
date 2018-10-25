@@ -22,7 +22,7 @@ void setup() {
 
 void loop() {
 
-    // Bibliothèque Bouton    
+    // Bibliothèque Button    
     boutonD.check();
     countD = boutonD.getNumber();
     if (countD > 0) {
