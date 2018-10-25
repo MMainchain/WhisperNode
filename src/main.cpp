@@ -11,8 +11,8 @@ const int yellowButton = 5;
 int countD = 0;
 int countG = 0;
 
-Bouton boutonD(blueButton);
-Bouton boutonG(yellowButton);
+/*Bouton boutonD(blueButton);
+Bouton boutonG(yellowButton);*/
 
 void setup() {
 
@@ -22,6 +22,7 @@ void setup() {
 }
 
 void loop() {
+
     /** TP1 **/
     
     // Bibliothèque Bouton    
@@ -39,7 +40,12 @@ void loop() {
     //    Serial.println(countG);
     //}
 
-    LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, 
-                SPI_OFF, USART0_OFF, TWI_OFF);
+    /** TP2 **/
+   /* LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, 
+                SPI_OFF, USART0_OFF, TWI_OFF);*/
+
+    // LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF); 
+
+    LowPower.powerStandby(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
 
 }
