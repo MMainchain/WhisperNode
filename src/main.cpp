@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <Bouton.h>
+#include "LowPower.h"
 
 #define BAUD 9600
 
@@ -21,21 +22,24 @@ void setup() {
 }
 
 void loop() {
-
+    /** TP1 **/
+    
     // Bibliothèque Bouton    
-    boutonD.check();
-    countD = boutonD.getNumber();
-    if (countD > 0) {
-        Serial.print("D"); 
-        Serial.println(countD);
-    }
+    // boutonD.check();
+    // countD = boutonD.getNumber();
+    // if (countD > 0) {
+    //    Serial.print("D"); 
+    //    Serial.println(countD);
+    //}
 
-    boutonG.check();
-    countG = boutonG.getNumber();
-    if (countG > 0) {
-        Serial.print("G"); 
-        Serial.println(countG);
-    }
+    //boutonG.check();
+    //countG = boutonG.getNumber();
+    //if (countG > 0) {
+    //    Serial.print("G"); 
+    //    Serial.println(countG);
+    //}
 
+    LowPower.idle(SLEEP_8S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, 
+                SPI_OFF, USART0_OFF, TWI_OFF);
 
 }
