@@ -9,13 +9,16 @@ Editeurs supportant PlatformIO IDE:
  - (à compléter...)
 
 Installer la librairy Talk2 
- - Menu plateformio -> install/update library platformio lib install "Talk2" 
+ - Menu plateformio -> install/update library platformio lib install "Talk2"
+ - OU `$ pio lib install "Talk2"`
 
 Installer la librairie de gestion des communications "RadioHead":
-`$ pio lib install "RadioHead"`
+ - Menu plateformio -> install/update library platformio lib install "RadioHead"
+ - OU `$ pio lib install "RadioHead"`
 
 Installer la librairie de gestion de la consommation "LowPower":
-`$ pio lib install "LowPower"`
+ - Menu plateformio -> install/update library platformio lib install "LowPower"
+ - OU `$ pio lib install "LowPower"`
 
 **Utilisation**
 Compilation:
