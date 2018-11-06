@@ -24,6 +24,8 @@ void setup() {
     // put your setup code here, to run once:
     Serial.begin(BAUD); // Définition du port de sortie 
 
+    /** TP2 **/
+    
     // Pour mémoire flash
     myflash.init(T2_WPN_FLASH_SPI_CS);
     myflash.powerDown();
@@ -76,14 +78,17 @@ void loop() {
     // LowPower.powerDown(SLEEP_FOREVER, ADC_ON, BOD_ON);
 
     // Pour le calculateur
-    myradio.init();
-    digitalWrite(9, LOW);
-    digitalWrite(6, HIGH);
-    delay(500);
-    digitalWrite(6, LOW);
-    digitalWrite(9, HIGH);
-    myradio.sleep();
-    LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
-    delay(5000);
+    // myradio.init();
+    // digitalWrite(9, LOW);
+    // digitalWrite(6, HIGH);
+    // delay(500);
+    // digitalWrite(6, LOW);
+    // digitalWrite(9, HIGH);
+    // myradio.sleep();
+    // LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
+    // delay(5000);
+
+    /** TP3 **/
+
 
 }
