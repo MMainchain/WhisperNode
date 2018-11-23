@@ -22,13 +22,16 @@ Bouton boutonD(blueButton);
 // RH_RF95 myradio;
 
 T2Message t2message;
+uint8_t radioBuf[(T2_MESSAGE_HEADERS_LEN + T2_MESSAGE_MAX_DATA_LEN)];
+
+int serialId = 10;
+int id = 0;
 
 void setup() {
 
     // put your setup code here, to run once:
     Serial.begin(BAUD); // Définition du port de sortie 
 
-    Wire.begin();
     /** TP2 **/
 
     // Pour mémoire flash
@@ -39,33 +42,112 @@ void setup() {
     // myradio.init();
     // myradio.sleep();
 
+    /** TP3 **/
+    Wire.begin();
+
     LoRa.setPins(10,7,2); 
-    if(LoRa.begin(868E6)) { 
+    if(!LoRa.begin(868E6)) { 
         Serial.println("Starting LoRa failed!"); 
         while(1);
     } else {
-        Serial.println("Starting");
-    }
-}
-
-void initialisation() {
-    Serial.println("Init");
-    LoRa.setPins(10,7,2); 
-    if(LoRa.begin(868E6)) { 
-        Serial.println("Starting LoRa failed!"); 
-        while(1);
+        Serial.println("LoRa started");
     }
 }
 
 void createChannel() {
     Serial.println("create channel");
+    while(1) {
+    int packetSize = LoRa.parsePacket();
+    // Serial.println(packetSize);
+        if (packetSize) {
+            int i = 0;
+            char *message;
+            while (LoRa.available()) {
+                message[i++] = (char) LoRa.read();
+            }
+            Serial.println(message);
+        }
+    }
 }
 
-void emitData() {
-    Serial.println("emit data");
+void initialisation(int idx, int src, int dst, int sdx, int cmd, const char *data, int len) {
+    Serial.println("Init");
+    uint8_t radioBufLen = 0;
+
+    t2message.idx = idx;
+    t2message.src = src;
+    t2message.dst = dst;
+
+    t2message.sdx = sdx;
+    t2message.cmd = cmd;
+    t2message.len = len;
+    memcpy(t2message.data, data, len);
+    t2message.getSerializedMessage(radioBuf, &radioBufLen);
     LoRa.beginPacket(); 
-    // LoRa.write(message, 10); 
+    LoRa.write(radioBuf, radioBufLen);
     LoRa.endPacket();
+
+    char message[250];
+    int idNode = 0;
+    int idNetwork = 0;
+    int idWhisperNode = 0;
+    
+    while(idWhisperNode != serialId) {
+        int i = 0;
+        int packetSize = LoRa.parsePacket();
+        if (packetSize) {
+            while (LoRa.available() && i < 250) {
+                message[i++] = (char) LoRa.read();
+            }
+            message[i++] = 0;
+        }
+
+        if (packetSize) {
+            t2message.setSerializedMessage((uint8_t*) message, i);
+
+            idNode = atoi(strtok((char*)t2message.data, ";"));
+            idNetwork = atoi(strtok(NULL, ";"));
+            idWhisperNode = atoi(strtok(NULL, ";"));
+
+            id = idNode;
+        }
+    }
+
+    Serial.println(id);
+}
+
+int read() {
+    int packetSize = LoRa.parsePacket();
+    if (packetSize) {
+        int i = 0;
+        char *message;
+        while (LoRa.available()) {
+            message[i++] = (char) LoRa.read();
+        }
+        Serial.println(message);
+    }
+}
+
+int emitData(int idx, int src, int dst, int sdx, int cmd, const char *data, int len) {
+    Serial.println("emit data");
+
+    uint8_t radioBufLen = 0;
+
+    t2message.idx = idx;
+    t2message.src = src;
+    t2message.dst = dst;
+
+    t2message.sdx = sdx;
+    t2message.cmd = cmd;
+    t2message.len = len;
+    memcpy(t2message.data, data, len);
+    t2message.getSerializedMessage(radioBuf, &radioBufLen);
+
+    LoRa.beginPacket(); 
+    LoRa.write(radioBuf, radioBufLen);
+    LoRa.endPacket();
+
+    
 }
 
 void loop() {
@@ -128,17 +210,14 @@ void loop() {
 
     boutonD.check();
     countD = boutonD.getNumber();
-    // if (countD > 0) {
-    //    Serial.print("D"); 
-    //    Serial.println(countD);
-    // }
     if (countD == 1) {
-        initialisation(); 
+        initialisation(0x00, 0x00, 0x01, 0x01, 0x00, "10;", 3);
     }
     if (countD == 2) {
         createChannel();
     }
     if (countD == 3) {
-        emitData();
+        emitData(0x00, 0x00, 0x01, 0x01, 0x00, "10;", 3);
     }
+    
 }
