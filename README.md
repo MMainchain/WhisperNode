@@ -1,5 +1,8 @@
-Procédure de déploiement du programme sur ARDUINO
+WhisperNode
 =================================================
+Mael MAINCHAIN & Chloe GUILBAUD
+
+# Procédure de déploiement du programme sur ARDUINO
 
 **Première utilisation**
 Installer le package PlatformIO IDE
