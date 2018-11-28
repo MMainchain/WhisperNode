@@ -5,9 +5,10 @@
 #include <RH_RF95.h>
 #include <T2WhisperNode.h>
 #include <LoRa.h>
-//#include <PinChangeInt.h>
-//#include <RTClibExtended.h>
-//#include <LowPower.h>
+#include <PinChangeInt.h>
+#include <RTClibExtended.h>
+#include <LowPower.h>
+RH_RF95 myradio;
 
 /// A MODIFIER
 /// myNetID = mettre ici le réseau de la passerelle
@@ -22,8 +23,11 @@ int myChannel =0;
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 
+// Button
+const int button = 4;
+
 T2Flash myFlash;
-//RTC_DS3231 rtc;      //we are using the DS3231 RTC
+RTC_DS3231 rtc;      //we are using the DS3231 RTC
 
 // Radio
 uint8_t radioBuf[(T2_MESSAGE_HEADERS_LEN + T2_MESSAGE_MAX_DATA_LEN)];
@@ -107,30 +111,34 @@ void WakeUpRTC(){
     Serial.println("WakeUp RTC!");
     Serial.flush();
     // Code a développer pour réveiller le WhisperNode toutes les secondes
-    // ...
+    detachInterrupt(1);
   }
 
 void setup() {
     Serial.begin(9600);
     Serial.println("Radio Init");
     LoRa.setPins(10,7,2);
-      if (!LoRa.begin(868E6)) {
-        	Serial.println("Starting LoRa failed!");
-        	while (1);
-    	}
+    if (!LoRa.begin(868E6)) {
+      	Serial.println("Starting LoRa failed!");
+       	while (1);
+    }
 
   // Code placant le bouton 2 (T2_WPN_BTN_2) en mode interruption
-  // ...
+    PCintPort::attachInterrupt(T2_WPN_BTN_2, WakeUp, FALLING);
 
   // Code récupérant l'uniqueId de la Flash
-  // ...
-  Serial.println(mySerialNumber);
+    myFlash.init(T2_WPN_FLASH_SPI_CS);
+    mySerialNumber = myFlash.readByte(myFlash.uniqueId[6]);
+    Serial.print("Serial number: ");
+    Serial.println(mySerialNumber);
+
+    myradio.init();
 
   // partie a décommenter pour la uestion sur RTC
-  // if (! rtc.begin()) {
-  //   Serial.println("Couldn't find RTC");
-  //   while (1);
-  // }
+  if (! rtc.begin()) {
+    Serial.println("Couldn't find RTC");
+    while (1);
+  }
 
 
   // ALM1_EVERY_SECOND -- causes an alarm once per second.
@@ -143,6 +151,9 @@ void setup() {
   // ...
   // Code a développer pour réveiller le WhisperNode toutes les secondes
   // ...
+  rtc.setAlarm(ALM1_EVERY_SECOND, 01, 00, 00, 00);
+  rtc.alarmInterrupt(1, true);
+  attachInterrupt(1, WakeUpRTC, LOW);   
 }
 
 char message[255]; //buffeur de reception d'un message
@@ -231,7 +242,13 @@ void protocoleReseau(){
 }
 void loop() {
   //protocoleReseau();
-  Serial.print(".");
+  //Serial.print(".");
+
+  rtc.setAlarm(ALM1_EVERY_SECOND, 01, 00, 00, 00);
+  attachInterrupt(1, WakeUpRTC, LOW); 
+
   // Code a développer pour endormir le WhisperNode et le réveiller toutes les secondes
-  // ...
+  myFlash.powerDown();
+  myradio.sleep();
+  LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
 }
