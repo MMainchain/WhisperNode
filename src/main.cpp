@@ -1,4 +1,3 @@
-
 // Definition de la taille max du payload
 #define T2_MESSAGE_MAX_DATA_LEN 15
 #include <Arduino.h>
@@ -23,10 +22,10 @@ int myChannel =0;
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 
+const int nbMin = 1; // Réveil toutes les nbMin minutes
+
 // Button
 const int button = 4;
-
-const int nbMin = 1; // Réveil toutes les nbMin minutes
 
 T2Flash myFlash;
 RTC_DS3231 rtc;      //we are using the DS3231 RTC
@@ -153,15 +152,12 @@ void setup() {
   // ...
   // Code a développer pour réveiller le WhisperNode toutes les secondes
   // ...
-  
-  
   // Déclanchement toutes les secondes: 
   rtc.setAlarm(ALM1_EVERY_SECOND, 01, 00, 00, 00);
   // Déclanchement toutes les minutes:
   // rtc.setAlarm(ALM1_MATCH_MINUTES, rtc.now().second(), rtc.now().minute() + nbMin, 00, 00);
   rtc.alarmInterrupt(1, true);
-  rtc.alarmInterrupt(2, true);
-  attachInterrupt(1, WakeUpRTC, LOW);
+  attachInterrupt(1, WakeUpRTC, LOW);   
 }
 
 char message[255]; //buffeur de reception d'un message
@@ -252,11 +248,11 @@ void loop() {
   //protocoleReseau();
   //Serial.print(".");
 
-  // Déclanchement toutes les secondes (working): 
+  // Déclanchement toutes les secondes: 
   rtc.setAlarm(ALM1_EVERY_SECOND, 01, 00, 00, 00);
-  // Déclanchement toutes les minutes (not working):
-  //rtc.setAlarm(ALM1_MATCH_MINUTES, rtc.now().second(), rtc.now().minute() + nbMin, 00, 00);
-  attachInterrupt(1, WakeUpRTC, LOW);
+  // Déclanchement toutes les minutes:
+  // rtc.setAlarm(ALM1_MATCH_MINUTES, rtc.now().second(), rtc.now().minute() + nbMin, 00, 00);
+  attachInterrupt(1, WakeUpRTC, LOW); 
 
   // Code a développer pour endormir le WhisperNode et le réveiller toutes les secondes
   myFlash.powerDown();
