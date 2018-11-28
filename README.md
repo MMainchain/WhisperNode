@@ -3,7 +3,7 @@ WhisperNode
 Maël MAINCHAIN & Chloé GUILBAUD 
 
 # Avancement
-L'ensemble des questions ont été traitées
+L'ensemble des questions (Q1 à Q6) ont été traitées et le code fonctionne.
 
 # Procédure de déploiement du programme sur ARDUINO (Visual Studio)
 
