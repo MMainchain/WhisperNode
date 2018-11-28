@@ -1,7 +1,13 @@
-Procédure de déploiement du programme sur ARDUINO
+WhisperNode
 =================================================
+Maël MAINCHAIN & Chloé GUILBAUD 
 
-**Première utilisation**
+# Avancement
+L'ensemble des questions ont été traitées
+
+# Procédure de déploiement du programme sur ARDUINO (Visual Studio)
+
+## Première utilisation
 Installer le package PlatformIO IDE
 Editeurs supportant PlatformIO IDE:
  - Visual Studio Code
@@ -20,7 +26,7 @@ Installer la librairie de gestion de la consommation "LowPower":
  - Menu plateformio -> install/update library platformio lib install "LowPower"
  - OU `$ pio lib install "LowPower"`
 
-**Utilisation**
+## Utilisation
 Compilation:
  - Menu platformio -> Build
 Déploiement sur l'appareil:
