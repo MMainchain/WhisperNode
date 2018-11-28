@@ -1,9 +1,13 @@
+
 // Definition de la taille max du payload
 #define T2_MESSAGE_MAX_DATA_LEN 15
 #include <Arduino.h>
 #include <RH_RF95.h>
 #include <T2WhisperNode.h>
 #include <LoRa.h>
+//#include <PinChangeInt.h>
+//#include <RTClibExtended.h>
+//#include <LowPower.h>
 
 /// A MODIFIER
 /// myNetID = mettre ici le réseau de la passerelle
@@ -11,12 +15,15 @@
 
 ////////////////////////////////////////////
 /// Configuration WhisperNode
-int myNetID = 10; // Definition du réseau
-int myID = 10; // ID du WhisperNode
-int mySerialNumber = 10; // Numero de série.
+int myNetID = 1; // Definition du réseau
+int myID = 0; // ID du WhisperNode
+int mySerialNumber = 16; // Numero de série.
 int myChannel =0;
 ////////////////////////////////////////////
 ////////////////////////////////////////////
+
+T2Flash myFlash;
+//RTC_DS3231 rtc;      //we are using the DS3231 RTC
 
 // Radio
 uint8_t radioBuf[(T2_MESSAGE_HEADERS_LEN + T2_MESSAGE_MAX_DATA_LEN)];
@@ -91,6 +98,18 @@ int sendMyValue(int value){
 	return sendLORA( myNetID, myID,  0x01,  0x03,  0x01, buf, len);
 }
 
+void WakeUp(){
+    Serial.println("WakeUp!");
+    Serial.flush();
+}
+
+void WakeUpRTC(){
+    Serial.println("WakeUp RTC!");
+    Serial.flush();
+    // Code a développer pour réveiller le WhisperNode toutes les secondes
+    // ...
+  }
+
 void setup() {
     Serial.begin(9600);
     Serial.println("Radio Init");
@@ -99,6 +118,31 @@ void setup() {
         	Serial.println("Starting LoRa failed!");
         	while (1);
     	}
+
+  // Code placant le bouton 2 (T2_WPN_BTN_2) en mode interruption
+  // ...
+
+  // Code récupérant l'uniqueId de la Flash
+  // ...
+  Serial.println(mySerialNumber);
+
+  // partie a décommenter pour la uestion sur RTC
+  // if (! rtc.begin()) {
+  //   Serial.println("Couldn't find RTC");
+  //   while (1);
+  // }
+
+
+  // ALM1_EVERY_SECOND -- causes an alarm once per second.
+  // ALM1_MATCH_SECONDS -- causes an alarm when the seconds match (i.e. once per minute).
+  // ALM1_MATCH_MINUTES -- causes an alarm when the minutes and seconds match.
+  // ALM1_MATCH_HOURS -- causes an alarm when the hours and minutes and seconds match.
+  // ALM1_MATCH_DATE -- causes an alarm when the date of the month and hours and minutes and seconds match.
+  // ALM1_MATCH_DAY -- causes an alarm when the day of the week and hours and minutes and seconds match.
+  //rtc.setAlarm(...);   //set your wake-up time here
+  // ...
+  // Code a développer pour réveiller le WhisperNode toutes les secondes
+  // ...
 }
 
 char message[255]; //buffeur de reception d'un message
@@ -126,11 +170,11 @@ unsigned long int envoisSendMyID=0;
 unsigned long int envoisdonnees=0;
 unsigned long int envoisSendMyChannel=0;
 
-void loop() {
+void protocoleReseau(){
   /// RECEPTION
   if (receivLoRa()==1) {
       // Recoit on un ID ???
-      if ((myMsg.idx == 0x1)&&(myMsg.dst==0x00)&&(myMsg.src==0x01)&&(myMsg.sdx=0x01)) {
+      if ((myMsg.idx == myNetID)&&(myMsg.dst==0x00)&&(myMsg.src==0x01)&&(myMsg.sdx=0x01)) {
         parseString((char *) myMsg.data);
           Serial.print("Reception d'un ID : ");
           Serial.print(arrayint[0]);
@@ -160,19 +204,19 @@ void loop() {
     /// FIN PARTIE RECEPTION
 
     /// DEMANDE ID toutes les 500 millis secondes
-	if (myID==0) {
-	  if ((millis()-envoisSendMyID) > 500) {
+    if (myID==0) {
+      if ((millis()-envoisSendMyID) > 500) {
           Serial.println("J'ai besoin d'un ID");
-		  sendGiveMeANodeID();
-		  envoisSendMyID=millis();
-	  }
-	}
+            sendGiveMeANodeID();
+            envoisSendMyID=millis();
+        }
+     }
 
      if ((myID!=0)&&(myChannel==0)) {
        if ((millis()-envoisSendMyChannel) > 500) {
            Serial.println("J'ai besoin d'un Channel");
-             sendGiveMeAChannelAndField();
-             envoisSendMyChannel=millis();
+           sendGiveMeAChannelAndField();
+      envoisSendMyChannel=millis();
          }
      }
 
@@ -184,6 +228,10 @@ void loop() {
              envoisdonnees=millis();
          }
       }
-
-
+}
+void loop() {
+  //protocoleReseau();
+  Serial.print(".");
+  // Code a développer pour endormir le WhisperNode et le réveiller toutes les secondes
+  // ...
 }
