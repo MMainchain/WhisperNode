@@ -11,8 +11,8 @@
 
 ////////////////////////////////////////////
 /// Configuration WhisperNode
-int myNetID = 1; // Definition du réseau
-int myID = 0; // ID du WhisperNode
+int myNetID = 10; // Definition du réseau
+int myID = 10; // ID du WhisperNode
 int mySerialNumber = 10; // Numero de série.
 int myChannel =0;
 ////////////////////////////////////////////
